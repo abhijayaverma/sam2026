@@ -6,15 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Certificate from "@/components/Certificate";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
-function makeSlug(value) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 70);
-}
+import { makeWorkshopSlug } from "@/lib/slug";
 
 function StudentPortal() {
   const searchParams = useSearchParams();
@@ -36,7 +28,7 @@ function StudentPortal() {
         .from("workshops")
         .select("id, name, date, organizer");
       const matchedWorkshop = (data || []).find(
-        (item) => makeSlug(`${item.name}-${item.date}`) === workshopRef
+        (item) => makeWorkshopSlug(item.name, item.date) === workshopRef
       );
       setWorkshop(matchedWorkshop || null);
     }
