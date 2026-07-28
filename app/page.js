@@ -6,10 +6,29 @@ import { supabase } from "@/lib/supabaseClient";
 import Certificate from "@/components/Certificate";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { makeWorkshopSlug } from "@/lib/slug";
+
+async function waitForCertificateAssets(node) {
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
+  const images = Array.from(node.querySelectorAll("img"));
+  await Promise.all(
+    images.map((image) => {
+      if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+      if (image.decode) return image.decode().catch(() => undefined);
+      return new Promise((resolve) => {
+        image.onload = resolve;
+        image.onerror = resolve;
+      });
+    })
+  );
+}
 
 function StudentPortal() {
   const searchParams = useSearchParams();
-  const workshopId = searchParams.get("workshop");
+  const workshopRef = searchParams.get("workshop");
 
   const [workshop, setWorkshop] = useState(null);
   const [rollNo, setRollNo] = useState("");
@@ -22,21 +41,22 @@ function StudentPortal() {
 
   useEffect(() => {
     async function loadWorkshop() {
-      if (!workshopId) return;
+      if (!workshopRef) return;
       const { data } = await supabase
         .from("workshops")
-        .select("id, name, date, organizer")
-        .eq("id", workshopId)
-        .single();
-      setWorkshop(data || null);
+        .select("id, name, date, organizer");
+      const matchedWorkshop = (data || []).find(
+        (item) => makeWorkshopSlug(item.name, item.date) === workshopRef
+      );
+      setWorkshop(matchedWorkshop || null);
     }
     loadWorkshop();
-  }, [workshopId]);
+  }, [workshopRef]);
 
   async function handleCheck(e) {
     e.preventDefault();
     if (!rollNo.trim()) return;
-    if (!workshopId) {
+    if (!workshopRef || !workshop) {
       setStatus("error");
       setErrorMsg("No workshop selected. Please use the link shared by your organizer.");
       return;
@@ -48,7 +68,7 @@ function StudentPortal() {
     const { data, error } = await supabase
       .from("attendance")
       .select("roll_no, name")
-      .eq("workshop_id", workshopId)
+      .eq("workshop_id", workshop.id)
       .ilike("roll_no", rollNo.trim())
       .maybeSingle();
 
@@ -67,24 +87,42 @@ function StudentPortal() {
   }
 
   async function handleDownload() {
-    if (!certRef.current) return;
+    if (!certRef.current || !record) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(certRef.current, { scale: 2 });
+      await waitForCertificateAssets(certRef.current);
+
+      const canvas = await html2canvas(certRef.current, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true,
+      });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: "landscape",
-        unit: "px",
-        format: [canvas.width, canvas.height],
+        unit: "mm",
+        format: "a4",
       });
-      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imageRatio = canvas.width / canvas.height;
+      const pageRatio = pageWidth / pageHeight;
+      const renderWidth = imageRatio > pageRatio ? pageWidth : pageHeight * imageRatio;
+      const renderHeight = imageRatio > pageRatio ? pageWidth / imageRatio : pageHeight;
+      const offsetX = (pageWidth - renderWidth) / 2;
+      const offsetY = (pageHeight - renderHeight) / 2;
+
+      pdf.addImage(imgData, "PNG", offsetX, offsetY, renderWidth, renderHeight);
       pdf.save(`Certificate_${record.roll_no}.pdf`);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg("Could not prepare the PDF. Please try again.");
     } finally {
       setDownloading(false);
     }
   }
 
-  const certId = record ? `${workshopId?.slice(0, 8)}-${record.roll_no}` : "";
+
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center px-6 py-12">
@@ -98,7 +136,7 @@ function StudentPortal() {
           </p>
         ) : (
           <p className="text-slate-500 text-center mb-8 text-sm">
-            {workshopId
+            {workshopRef
               ? "Loading workshop details..."
               : "No workshop link detected. Ask your organizer for the correct link."}
           </p>
@@ -128,7 +166,7 @@ function StudentPortal() {
 
         {status === "not_eligible" && (
           <div className="mt-6 bg-red-950/40 border border-red-900 rounded-lg p-4 text-red-300 text-sm">
-            No attendance record found for roll number "{rollNo}" in this
+            No attendance record found for roll number &quot;{rollNo}&quot; in this
             workshop. Certificates are only issued to students marked
             present. If you believe this is an error, contact the
             workshop organizer.
@@ -147,15 +185,10 @@ function StudentPortal() {
               Attendance verified. Your certificate is ready.
             </p>
             <div className="overflow-x-auto max-w-full border border-slate-800 rounded-lg">
-              <div style={{ transform: "scale(0.45)", transformOrigin: "top left", width: "1000px", height: "700px" }}>
+              <div style={{ transform: "scale(0.45)", transformOrigin: "top left", width: "1882px", height: "1364px" }}>
                 <Certificate
                   ref={certRef}
                   studentName={record.name || `Roll No ${record.roll_no}`}
-                  rollNo={record.roll_no}
-                  workshopName={workshop?.name}
-                  workshopDate={workshop?.date}
-                  organizer={workshop?.organizer}
-                  certId={certId}
                 />
               </div>
             </div>
