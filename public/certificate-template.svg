@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1882" height="1364" viewBox="0 0 1882 1364">
+  <rect width="1882" height="1364" fill="#fff"/>
+  <rect x="4" y="4" width="1874" height="1356" fill="none" stroke="#0b7fc3" stroke-width="8"/>
+  <rect x="128" y="134" width="1626" height="1066" fill="none" stroke="#f4c842" stroke-width="6"/>
+
+  <circle cx="270" cy="260" r="78" fill="none" stroke="#ef4444" stroke-width="8"/>
+  <text x="270" y="270" text-anchor="middle" font-family="Georgia, serif" font-size="32" font-weight="700" fill="#ef4444">CSJMU</text>
+  <circle cx="505" cy="260" r="70" fill="#fbbf24"/>
+  <text x="505" y="280" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="700" fill="#7c2d12">A++</text>
+  <text x="910" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="116" font-weight="700" fill="#111">kan-2026</text>
+  <text x="1395" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="100" font-weight="800" fill="#ea580c">IIM</text>
+  <circle cx="1620" cy="260" r="78" fill="none" stroke="#4338ca" stroke-width="8"/>
+  <text x="1620" y="270" text-anchor="middle" font-family="Georgia, serif" font-size="34" font-weight="700" fill="#4338ca">IITK</text>
+
+  <text x="941" y="570" text-anchor="middle" font-family="Times New Roman, Georgia, serif" font-size="116" letter-spacing="9" fill="#1f7fc1">CERTIFICATE</text>
+  <text x="941" y="654" text-anchor="middle" font-family="Times New Roman, Georgia, serif" font-size="52" font-weight="800" fill="#000">OF APPRECIATION</text>
+
+  <g transform="translate(1488 515)">
+    <path d="M37 0 L49 19 L72 13 L78 36 L96 48 L78 60 L72 83 L49 77 L37 96 L25 77 L2 83 L8 60 L-10 48 L8 36 L2 13 L25 19 Z" fill="#f2b233"/>
+    <text x="37" y="42" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#7c2d12">23rd</text>
+    <text x="37" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#7c2d12">March</text>
+    <text x="37" y="74" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#7c2d12">2k26</text>
+  </g>
+
+  <text x="370" y="760" font-family="Times New Roman, Georgia, serif" font-size="42" font-weight="700" fill="#000">Mr/Ms</text>
+  <line x1="368" y1="775" x2="1462" y2="775" stroke="#111" stroke-width="4"/>
+
+  <text x="941" y="830" text-anchor="middle" font-family="Times New Roman, Georgia, serif" font-size="34" fill="#000">“for <tspan font-weight="700">active participation</tspan> in the <tspan font-weight="700">Poster Competition</tspan> at <tspan font-weight="700">kan - 2026</tspan>, held at the <tspan font-weight="700">UIET, CSJMU, Kanpur</tspan>, in</text>
+  <text x="941" y="878" text-anchor="middle" font-family="Times New Roman, Georgia, serif" font-size="34" fill="#000">association with the <tspan font-weight="700">IIM CSJMU Kanpur Student Chapter</tspan> and the <tspan font-weight="700">IIM Kanpur Chapter</tspan>, on 23rd March 2026.”</text>
+
+  <g font-family="Georgia, serif" font-size="20" font-weight="700" fill="#dc2626" letter-spacing="1.5">
+    <line x1="190" y1="1082" x2="502" y2="1082" stroke="#111" stroke-width="4"/>
+    <text x="346" y="1112" text-anchor="middle">HEAD</text>
+    <text x="346" y="1138" text-anchor="middle">MSE DEPARTMENT , IIT KANPUR</text>
+    <line x1="585" y1="1082" x2="898" y2="1082" stroke="#111" stroke-width="4"/>
+    <text x="742" y="1112" text-anchor="middle">HEAD</text>
+    <text x="742" y="1138" text-anchor="middle">MSME DEPARTMENT, UIET, CSJMU KANPUR</text>
+    <line x1="998" y1="1082" x2="1318" y2="1082" stroke="#111" stroke-width="4"/>
+    <text x="1158" y="1112" text-anchor="middle">CHAIRMAN</text>
+    <text x="1158" y="1138" text-anchor="middle">IIM KANPUR CHAPTER</text>
+    <line x1="1414" y1="1082" x2="1726" y2="1082" stroke="#111" stroke-width="4"/>
+    <text x="1570" y="1112" text-anchor="middle">FACULTY INCHARGE</text>
+    <text x="1570" y="1138" text-anchor="middle">IIM CSJMU KANPUR STUDENT CHAPTER</text>
+  </g>
+</svg>

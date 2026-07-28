@@ -2,15 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
-
-function makeSlug(value) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 70);
-}
+import { makeWorkshopSlug } from "@/lib/slug";
 
 export default function AdminPage() {
   const [workshops, setWorkshops] = useState([]);
@@ -53,7 +45,7 @@ export default function AdminPage() {
   }, []);
 
   function buildStudentLink(workshop) {
-    return `${window.location.origin}/?workshop=${makeSlug(`${workshop.name}-${workshop.date}`)}`;
+    return `${window.location.origin}/?workshop=${makeWorkshopSlug(workshop.name, workshop.date)}`;
   }
 
   async function handleCreateWorkshop(e) {
@@ -76,7 +68,7 @@ export default function AdminPage() {
 
       if (wsError) throw wsError;
 
-      const link = `${window.location.origin}/?workshop=${makeSlug(`${workshop.name}-${workshop.date}`)}`;
+      const link = `${window.location.origin}/?workshop=${makeWorkshopSlug(workshop.name, workshop.date)}`;
       setSuccess(`Workshop "${name}" created. Student link: ${link}`);
       setName("");
       setDate("");
@@ -202,7 +194,7 @@ export default function AdminPage() {
               <div>
                 <p className="font-medium">{w.name}</p>
                 <p className="text-sm text-slate-400">{w.date} {w.organizer ? `· ${w.organizer}` : ""}</p>
-                <p className="text-xs text-slate-500">Link text: {makeSlug(`${w.name}-${w.date}`)}</p>
+                <p className="text-xs text-slate-500">Link text: {makeWorkshopSlug(w.name, w.date)}</p>
               </div>
               <button onClick={() => handleUnlock(w)} className="text-sm bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg">Manage students & link</button>
             </div>
