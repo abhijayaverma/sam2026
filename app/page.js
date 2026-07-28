@@ -8,6 +8,24 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { makeWorkshopSlug } from "@/lib/slug";
 
+async function waitForCertificateAssets(node) {
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
+  const images = Array.from(node.querySelectorAll("img"));
+  await Promise.all(
+    images.map((image) => {
+      if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+      if (image.decode) return image.decode().catch(() => undefined);
+      return new Promise((resolve) => {
+        image.onload = resolve;
+        image.onerror = resolve;
+      });
+    })
+  );
+}
+
 function StudentPortal() {
   const searchParams = useSearchParams();
   const workshopRef = searchParams.get("workshop");
@@ -69,18 +87,36 @@ function StudentPortal() {
   }
 
   async function handleDownload() {
-    if (!certRef.current) return;
+    if (!certRef.current || !record) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(certRef.current, { scale: 2 });
+      await waitForCertificateAssets(certRef.current);
+
+      const canvas = await html2canvas(certRef.current, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true,
+      });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: "landscape",
-        unit: "px",
-        format: [canvas.width, canvas.height],
+        unit: "mm",
+        format: "a4",
       });
-      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imageRatio = canvas.width / canvas.height;
+      const pageRatio = pageWidth / pageHeight;
+      const renderWidth = imageRatio > pageRatio ? pageWidth : pageHeight * imageRatio;
+      const renderHeight = imageRatio > pageRatio ? pageWidth / imageRatio : pageHeight;
+      const offsetX = (pageWidth - renderWidth) / 2;
+      const offsetY = (pageHeight - renderHeight) / 2;
+
+      pdf.addImage(imgData, "PNG", offsetX, offsetY, renderWidth, renderHeight);
       pdf.save(`Certificate_${record.roll_no}.pdf`);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg("Could not prepare the PDF. Please try again.");
     } finally {
       setDownloading(false);
     }
