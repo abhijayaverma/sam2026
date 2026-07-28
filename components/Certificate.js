@@ -8,7 +8,6 @@ const TEMPLATE_HEIGHT = 1364;
 const Certificate = forwardRef(function Certificate({ studentName }, ref) {
   const displayName = studentName || "";
   const nameFontSize = displayName.length > 28 ? "42px" : "52px";
-
   return (
     <div
       ref={ref}
